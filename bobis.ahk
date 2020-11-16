@@ -1,22 +1,31 @@
-﻿SetBatchLines, -1
+CoordMode,Pixel,Window
+CoordMode,Mouse,Window
+SetBatchLines, -1
 SetKeyDelay, 17
 #SingleInstance, Force
 
+FileReadLine,account,%A_MyDocuments%\RQaccount.txt, 1
+FileReadLine,password,%A_MyDocuments%\RQaccount.txt, 2
+FileReadLine,godswarfile,%A_MyDocuments%\RQaccount.txt, 3
+gosub klk1
+
+
 gosub, pwe1
+ 
 	Menu, Tray, icon, %a%
-	Gui, Add, Edit, w100 h20 vgodswarfile, 𝙎𝙚𝙡𝙚𝙘𝙩 𝙁𝙞𝙡𝙚
+	Gui, Add, Edit, w100 h20 vgodswarfile, %godswarfile%
 	Gui, Add, Button,x115 y5 gsearchpath, FILE
-	Gui,Add, Picture,x65 y40 w120 h100, %a%
+	Gui, Add, Picture,x65 y40 w120 h100, %a%
 	Gui, Add, Text,x200 y25 w100 h25 cwhite, Account:
-	Gui, Add, Edit, vaccount gklk1
-	Gui, Add, Text,x200 y85 w100 h25 cwhite, password:
-	Gui, Add, Edit, vpassword gklk1
+	Gui, Add, Edit, w130 h20 vaccount gklk1, %account%
+	Gui, Add, Text,x200 y85 w100 h25 cwhite, pa$$word:
+	Gui, Add, Edit, w130 h20 vpassword gklk1, %password%
 	Gui, Add, Button, x10 y50 w50 h25  grefresh, Refresh
 	Gui, Add, Button, w50 h25 gprocess1, Start
 	Gui, Add, Button, w50 h25 gexit, Exit 
 	Gui, Add, Text, x230 y180 c2DE91A, Powered by RodolfoRP
 	Gui, Add, Text, x240 y160 c42F7FA, 𝓕𝓵𝓸𝔀 𝓷𝓪𝓽𝓾𝓻𝓪𝓵
-	Gui, Add, CheckBox, x19 y160 vTalent cwhite, TP
+	Gui, Add, CheckBox, x19 y160 Checked vTalent gklk1 cwhite, TP
 	Gui, Add, Text , x75 y150 w50 h15 cwhite, RQ delay
 	Gui, Add, Edit, w30 h20 vdelay gklk1, 0
 	Gui, Color, black
@@ -32,14 +41,10 @@ gosub, pwe1
 ;################################################Setup#######################################################################################################
 
 	searchpath:
-	FileSelectFolder, almacen, , 3
+	FileSelectFolder, almacen, %godswarfile%
+
 	if (almacen == ""){
 		MsgBox, selecciona FILE y carpeta gw mmg
-	}
-
-	else if (almacen != "C:\Program Files (x86)\GodsWar Online")
-	{
-		MsgBox, mmg esa no es la carpeta gw
 	}
 
 	IniWrite,0,%almacen%\Localization\en_us\Settings\Sys\Magic.ini,5150,CoolingTime
@@ -47,10 +52,17 @@ gosub, pwe1
 	GuiControl, Text, godswarfile, %almacen%
 
 	klk1:
+	FileDelete,%A_MyDocuments%\RQaccount.txt
 	Gui, Submit, NoHide
 	return
 
 	GuiClose:
+	FileAppend,
+	(
+%account%
+%password%
+%almacen%
+	),%A_MyDocuments%\RQaccount.txt
 	Gui, cancel
 
 	exit:
@@ -64,7 +76,6 @@ gosub, pwe1
 ;##########################################################  Processs1 - ACTIVATE (1) #####################################################################################
 
 	
-
 	Process1:
 	
 		if WinExist("GodsWar Online [USA]")
@@ -79,7 +90,7 @@ gosub, pwe1
 			ControlSend,, %password%, A
 			sleep, 250
 			ControlSend,, {Enter}, A	
-			Gosub, verify
+			gosub, verify
 			return
 		}
 
@@ -89,7 +100,6 @@ gosub, pwe1
 			gosub wincheck
 			return
 		}
-
 
 
 return
@@ -106,7 +116,7 @@ loginCheck:
 				break
 			}
 			
-			else if (ErrorLevel = 1)
+			else
 			{
 			
 			}
@@ -118,14 +128,15 @@ loginCheck:
 ;##############################################  VERIFY 1- verifying (3) ##############################################
 
 
-		verify:             
+		verify:  
+		sleep, 2000
 		ImageSearch, x11, y11, 0,0,800,600,*100 %c%
 		
 			if (ErrorLevel = 0)
 			{
-				Sleep, 2000
 				gosub verify
 				return
+					
 			}
 		
 			else
@@ -135,7 +146,8 @@ loginCheck:
 
 			}
 		
-		return
+		
+	return
 
 
 ;############################################ VERIFY 2 (4) ###############################################################
@@ -144,13 +156,13 @@ loginCheck:
 		sleep, 300
 		ImageSearch, x111, y111, 0, 0, 800, 600,*100 %d%
 
-			If (ErrorLevel = 0)
-			{
-				MouseMove, 398, 360
-				Click
-				gosub enter2
-				return
-			}
+				If (ErrorLevel = 0)
+				{
+					MouseMove, 398, 360
+					Click
+					gosub enter2
+					return
+				}
 
 			else
 			{
@@ -198,7 +210,6 @@ loginCheck:
 
 ;-----------------------------------------------------------------------------------------Entrance Checker2
 	GM2:
-	sleep 1500
 	while True
 	{	
 		ImageSearch,,,292,262,506,381, *100 %wait%
@@ -348,12 +359,6 @@ return
 			break
 		}
 
-		
-		else if(ErrorLevel = 1)
-		{
-		
-		}
-
 	}
 
 return
@@ -364,11 +369,10 @@ return
 
 	setupwindows:
 	click, 254, 570
-	SetKeyDelay, 0,10, Play
-	SendPlay, {Enter}%jai%{Enter}
+	sleep 400
 	gosub wincheck
 	sleep 600
-	ControlSend,, {b}, A
+	Click 624, 604             ;<-------------- Bag Click
 	sleep 600
 	Click 553, 502
 	sleep 600
@@ -378,14 +382,16 @@ return
 	sleep , 600
 	Click, 78, 445
 	sleep, 600
-	gosub stall
+	goto stall
 	return
 
 
 ;-------------------------------------------------Stall setup-----------------
 
 	stall:
-		gosub wincheck
+	gosub wincheck
+	loop
+	{
 		ImageSearch, a111, b111, 0,0, 800, 600, *100 %e%
 
 			if (ErrorLevel = 0)
@@ -393,26 +399,22 @@ return
 				Click, 299, 403
 				sleep 500
 				Click, 312 , 71
-				MouseMove, 369, 349
-				sleep 1000
+				MouseMove, 375, 330
+				sleep 2000
 				Click
-				gosub detect
-				return
+				Goto detect
+				
 			}
 
-			else
-			{
-				gosub stall
-			}
-
-
-         	return
+	}	
+	
+    return
   
 ;-----------------------------------------------------------Detect on screen first windows called batch----------------
 	detect:
 	while True{
 		gosub wincheck
-		ImageSearch, a1111, b2222, 0, 0 , 800, 600, *100 %f%
+		ImageSearch,,, 0,0 ,800, 600, *100 %f%
 
 			if (ErrorLevel = 0)
 			{
@@ -422,7 +424,7 @@ return
 				break
 			}
 		
-			else if (ErrorLevel = 1)
+			else if (ErrorLevel = 0)
 			{
 				
 			}
@@ -434,11 +436,10 @@ return
 	detect2:
 	while True{
 		gosub wincheck
-		ImageSearch, c1, c2, 0,0, 800, 600, *100 %g%
+		ImageSearch, c1, c2, 0,0, 800, 600, *20 %g%
 
 			if (ErrorLevel = 0)
 			{	
-				sleep 1300
 				MouseClickDrag, L, 485, 263, 534, 111
 				gosub START
 				break
@@ -455,24 +456,22 @@ return
 
 ;------------------------------------------------------------------------------------Wincheck
 	wincheck:
-	While True{
 
-			if WinExist("GodsWar Online [USA]")
-			{
-				break
-			}
+		if WinExist("GodsWar Online [USA]")
+		{
+			return
+		}
 		  
 
-			else
-			{
-				Run, GodsWar.exe, %almacen%
-				WinWait, GodsWar Online [USA] 	
-				WinActivate, GodsWar Online [USA]
-				gosub, Process1
-				break
-			}
+		else
+		{
+			Run, GodsWar.exe, %almacen%
+			sleep 1000
+			WinWait, GodsWar Online [USA] 	
+			WinActivate, GodsWar Online [USA]
+			gosub process1
 
-  		  }
+		}
 		
 	return
 	
@@ -484,44 +483,36 @@ return
 
 ;-------------------not even in phone we make so many calls -RodolfoRP
 START:
+SetBatchLines, -1
+SetDefaultMouseSpeed, 0 
+SetMouseDelay, -1
+
 bobis = True
 sleep 1000			
 
 
 	loop
 	{
-		SetBatchLines, -1
-		SetDefaultMouseSpeed, 2
-		SetMouseDelay, 10
-
-		Click, 453, 339
-		Click, 453, 339
-	
-		SetDefaultMouseSpeed, 1
-		SetMouseDelay, 0
-	
-		gosub RQimg1 		; detect random quest opt
-		gosub RQimg2 		; detect claim sack opt
-		gosub RQchecker
 
 	if (bobis == "False")
 	{
-		MsgBox, the loop has reached its limits 
-		break
+		goto Close 
 	}
 	
 	else
 	{
-		
+	
 	}
-		SetDefaultMouseSpeed, 2
-		SetMouseDelay, 10
+		
+		gosub QuestManagerClick    ;first click
 	
-		Click, 392, 290
-		Click, 392, 290
+		gosub RQimg1 		; detect random quest opt
+		gosub RQimg2 		; detect claim sack opt
+		gosub RQchecker
 	
-		SetDefaultMouseSpeed, 1
-		SetMouseDelay, 0
+		
+		gosub PersonalHelperClick     ; second click
+		
 	
 		gosub Bugsackbatch 	; detect batch window (X) ----starting to bug 
 		gosub PREBugsack  	; preparing to start clicking all the bags spots
@@ -532,15 +523,77 @@ sleep 1000
 
 		gosub Last
 		gosub Last2
+
 	
 	}
 return
 
+
+
+
+;----------------------------------The clicks labels---------------------------------
+QuestManagerClick:
+Click, 453 339
+While True
+{
+	ImageSearch,,,5,535,106,562, *100 %RandomQuest%
+		
+		If (ErrorLevel = 0)
+		{
+			break
+		}
+		else
+		{
+			gosub AntiTrade
+			Click, 453 339
+		}
+}
+return
+
+;----------------------------------ClickBatch
+PersonalHelperClick:
+Click, 392 290
+while True
+{
+	ImageSearch,,,0,0,800,600, *100 %batch2%
+		
+		If (ErrorLevel = 0)
+		{
+			break
+		}
+		else
+		{
+			gosub AntiTrade
+			Click, 392 290
+		}
+}
+return
+
+;-------------------------------AntiTrade
+AntiTrade:
+While True
+{
+	ImageSearch,,,230,415,292,449, *100 %trade%
+		
+		if (ErrorLevel = 0)
+		{
+			Click, 334, 434
+		}
+		else
+		{
+			break
+		}
+}
+return
+
+
+
 ;--------------------------------------------------------------------------------------------------------
 
 RQimg1:
-while True{
-	ImageSearch, v1,v2,8,537, 103, 569, *20 %RandomQuest%
+while True
+{
+	ImageSearch,,,5,535,106,562, *100 %RandomQuest%
 
 		if (ErrorLevel = 0)
 		{
@@ -550,16 +603,17 @@ while True{
 
 		else
 		{
-		
+			gosub AntiTrade
 		}
-	}
+}
 return
 
 
 ;--------------------------------------------------------------------------------------------------randomquestIMG2
 RQimg2:
-while True{
-	ImageSearch,v11,v22, 0,0, 800,600, *100 %ClaimSack%
+while True
+{
+	ImageSearch,v11,v22,351,32,482,63, *100 %ClaimSack%
 	
 	if (ErrorLevel = 0)
 	{
@@ -568,69 +622,81 @@ while True{
 		break
 	}
 
-	else if (ErrorLevel = 1)
+	else
 	{
-		
+		gosub AntiTrade
 	}
 	
-	}
+}
 return
 
 
 ;-----------------------------------------------------------personal helper
 
 Bugsackbatch:
-while True{
+while True
+{
 	ImageSearch,,,0,0,800,600, *100 %batchx%
 	
-	if (ErrorLevel = 0)
-	{
-		Click, 35, 520
-		Break
-	}
+		if (ErrorLevel = 0)
+		{
+			sleep 10
+			Click, 31, 519
+			gosub 2
+			Break
+		}
 
-	else if (ErrorLevel = 1)
-	{
-
-	}
-	}
+		else
+		{
+			gosub AntiTrade
+			click, 30, 519
+		}
+}
 return
 
+;-----------------------------------------------------Bugsackbatch2
+2:
+loop
+{
+	ImageSearch,,,0,0,800,600, *100 %batchx%
+		If (ErrorLevel = 0)
+		{
+			Click, 31, 519
+		}
+		else
+		{
+			gosub AntiTrade
+			break
+		}
+}
+return
 ;----------------------------------------------------------------------------------------------------------
 
 
 
 PREBugsack:
-elapse = 0
-while True{
-	ImageSearch,,,378, 47, 421, 91, *1 %RQimg4%
+while True
+{
+	ImageSearch,,,378, 47, 421, 91, *20 %RQimg4%
 
 	if (ErrorLevel = 0)
 	{
 		sleep %delay%
 		break
 	}
-
-	else if (ErrorLevel = 1)
+	
+	else
 	{
-		elapse++
-		if (elapse > 1000)
-		{
-			msgbox, hay bobis
-		}
+		gosub AntiTrade
+		click, 30, 519
 	}
-
 }
-
 
 return
 
 
 ;-------------------------------------------------------------------------------------------------------------------------
 ClickAll:
-SetMouseDelay, -1
-SetDefaultMouseSpeed, 0
-
 		Click, R, 34,  285
 		Click, R, 66,  285
 		Click, R, 99,  285
@@ -728,10 +794,9 @@ SetDefaultMouseSpeed, 0
 ;------------------------------------------------------------------------------------------------------------------------------
 
 Last:
-
 while True{
-	Click, 370, 287
 
+	Click, 370, 287
 	ImageSearch,,,0,0,800,600, *100 %batch2%
 	
 		if (ErrorLevel = 0)
@@ -742,9 +807,9 @@ while True{
 		}
 
 
-		else if (ErrorLevel = 1)
+		else
 		{
-
+			gosub AntiTrade
 		}
 
 	}
@@ -754,6 +819,7 @@ return
 ;---------------------------------------------clicks cancel button after sack bugged (reset)-----------------------------------------------------------------------last2
 
 Last2:
+
 	while True{
 		ImageSearch,,,378, 52, 425, 93, *100 %RQimg4%
 		
@@ -763,9 +829,9 @@ Last2:
 				break
 			}		
 		
-			else if (ErrorLevel= 1)
+			else
 			{
-
+				gosub AntiTrade
 			}
 
 	}			
@@ -778,13 +844,14 @@ return
 ;################################################################# RQ CHECKER1 #############################
 	
 	RQchecker:
+	gosub AntiTrade
 	while True
 	{
-		ImageSearch,,,594,587,622,616, *100 %empty%
+		ImageSearch,,,625,588,654,616, *150 %empty%
 			
 			if (ErrorLevel = 0)
 			{
-				return
+				break
 			}
 			
 			else
@@ -796,12 +863,1044 @@ return
 			
 	}
 			
-	return		
+return		
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SECOND PEACE OF CODE SECOND STAGE----------------------------------------
+
+;--------------------#################################-------------------------------------------------------------------RELOG
+
+
+Close:
+Sleep 600
+Click , 775, 13
+sleep 400
+Click, 369, 360
+sleep 2000
+goto process#1
+
+
+process#1:
+if WinExist("GodsWar Online [USA]")
+		{
 			
+			WinActivate
+			gosub loginCheck#1
+			MouseMove, 0,0
+			ControlSend,, %account%, A
+			sleep 250
+			ControlSend,, {Tab}, A
+			ControlSend,, %password%, A
+			sleep, 250
+			ControlSend,, {Enter}, A
+			goto verify#1
+			return
+		}
+		
+		else 
+		{
+			goto wincheck#1
+			return
+		}
+return
+
+
+
+
+;---------------------------------svbug detect
+servercheck:
+ouo = 0
+loop
+{
+	ImageSearch,,,156,509,295,544, *170 %svbug%
 	
+		if (ErrorLevel = 0)
+		{
+			sleep 2000
+			ouo++
+					
+				if (ouo >= 3)
+				{
+					Click, 221, 529
+					sleep 400
+					Click, 221, 529
+					sleep 200
+					Click, 402, 411
+					gosub servercheck2Click
+					
+				}
+				
+		}
+		else
+		{
+			break
+		}
+		
+	
+}
+return
+;---------------------------------------------------------servercheck2
+servercheck2Click:
+while True
+	{
+		ImageSearch,,,438,499, 613, 546, *100 %server%
+		
+			if (ErrorLevel = 0)
+			{
+				sleep 1500
+				click 540, 527
+				ouo = 0
+				break
+			}
+
+	}
+return
+
+
+
+
+
+
+;--------------------------------------------------------------WaitSignal b bag
+
+	waitsignal#1:
+	while True
+	{
+
+		ImageSearch, n1,n2, 567,568,652,621, *100 %h%
+	
+		if (ErrorLevel = 0)
+		{
+			sleep 650
+			goto, setupwindows#1
+		}
+
+	}
+
+return
+
+
+
+;---------------------------------------------------------------------------------verify#1
+
+verify#1: 
+while True
+{ 
+		Sleep, 2000           
+		ImageSearch, x11, y11, 0,0,800,600,*100 %c%
+		
+			if (ErrorLevel = 0)
+			{
 			
+			}
+			else
+			{
+				goto verify#2
+			}
+}
+	
+		return
+
+;-------------------------------------------------------------------------------------
+
+verify#2:                 
+		sleep, 300
+		ImageSearch, x111, y111, 0, 0, 800, 600,*100 %d%
+
+			If (ErrorLevel = 0)
+			{
+				MouseMove, 398, 360
+				Click
+				goto enter#1
+				
+			}
+
+			else
+			{
+				gosub servercheck
+				gosub GM#1
+				goto process#2
+			}
+
+		return
+
+
+
+
+;-------------------------------------------------------------
+
+enter#1:
+ 
+			sleep 500
+			MouseMove, 398, 414
+			Click
+			gosub verify#1
+			return
+
+
+;---------------------------------------------------------------process2
+
+process#2:
+	sleep 800 
+		ImageSearch, value1, value2,0,0, 800,600,*100 %b%
+
+			if (ErrorLevel = 0)
+			{
+				MouseMove, 370, 358
+				Click
+				gosub savetime#1
+				gosub GM#1
+				MouseMove, 398, 495
+				Click
+				gosub waitsignal#1
+				return
+		
+			}
+
+			else
+			{
+				gosub frecuent#2
+				return
+			}
+		    
+	return
+
+;----------------------------------------------------------------savetime2
+
+savetime#1:                          ;<----------------------------16 SECS WINDOW
+	timer = 0
+	while True
+	{	
+		timer++
+		if (timer < 550)
+		{
+			ImageSearch,,,317,286, 379, 330, *100 %save%
+			
+			If (ErrorLevel = 0)
+			{
+				Click, 400, 358
+				goto savetime#2
+				
+			}
+		}
+		else	
+		{
+			break
+		}
+	}
+	
+	return
+
+
+;####################################################################GM
+
+
+GM#1:
+timers = 0
+	while True
+	{
+		
+		ImageSearch,,,622,519,800,600, *100 %entrance%
+			
+			if (ErrorLevel = 0)	
+			{
+				gosub GM#2
+				break
+			}
+			else
+			{
+				timers++
+				sleep 1000
+					
+					if (timers >= 7)
+					{
+						break
+					}
+			}
+
+	}	
+return
+
+
+;---------------------------------------------Wait for the char to appear
+GM#2:
+	while True
+	{
+		ImageSearch,,,292,262,506,381, *100 %wait%
+		
+			if (ErrorLevel = 0)
+			{
+				sleep, 1000
+			}
+			else
+			{
+				break
+			}
+	}
+return
+
+;--------------------------------------------ServerFull
+
+ServerFull:
+Loop
+{
+
+	ImageSearch,,,292,262,506,381, *100 serverfull.png
+		
+		if (ErrorLevel = 0)
+		{
+			sleep 25000
+			Click 403, 359
+			Goto savetime#2
+		}
+		else
+		{
+			gosub GM#1
+			goto Entrance#1
+		}
+}
+return
+
+;##########################################################frecuent2
+frecuent#2:
+		sleep 300 
+		ImageSearch, k1, k2, 0,0,800,600,*150 %b2%
+		
+			if (ErrorLevel = 0)
+			{
+				MouseMove, 370, 358
+				Click
+				gosub savetime#1
+				gosub GM#1
+				MouseMove, 398, 495
+				Click
+				gosub waitsignal#1
+				return
+			}
+		
+			else
+			{
+				goto ServerFull
+			}
+		   
+
+	return
+	
+	
+
+
+Entrance#1:
+
+	MouseMove, 398, 495
+	Click
+	gosub waitsignal#1
+	return
+	
+	
+	
+;----------------------------------------------------savetime2 SERVER AND LOGIN BUG
+savetime#2:
+	cagadita = 0					;<-----------------------------------Server to go back Or detect when bugged
+	while True
+	{
+		ImageSearch,,,438,499, 613, 546, *100 %server%
+		
+			if (ErrorLevel = 0)
+			{
+				click 540, 527
+				gosub GM#1
+				goto savetime#3
+			}
+			else
+			{
+				cagadita++
+				sleep 500
+				
+				if (cagadita >= 8) {
+				
+					ImageSearch,,,0,0,800,600, *100 %login%
+					
+						if (ErrorLevel = 0 )
+						{
+							Click, 401, 412
+						}
+				}
+			}
+
+	}
+	return
+
+
+;----------------------------------------------------------------- savetime#3
+savetime#3:
+ouo = 0
+loop
+{
+	sleep 500
+	ImageSearch,,,156,509,295,544, *170 %svbug%
+	
+		if (ErrorLevel = 0)
+		{
+			sleep, 2000
+			ouo++
+					
+				if (ouo >= 4)
+				{
+					Click, 221, 529
+					sleep 400
+					Click, 221, 529
+					sleep 200
+					Click, 402, 411
+					goto clickingsv
+					
+				}
+				
+		}
+		else
+		{
+			gosub GM#1
+			goto, process#2
+		}
+		
+	
+}
+return
+
+;--------------------------clickingsv
+clickingsv:
+while True
+	{
+		ImageSearch,,,438,499, 613, 546, *100 %server%
+		
+			if (ErrorLevel = 0)
+			{
+				sleep 1500
+				click 540, 527
+				goto savetime#3
+				break
+			}
+
+	}
+return
+;--------------------------------------------wincheck2
+wincheck#1:
+	While True
+	{
+
+		if WinExist("GodsWar Online [USA]")
+		{
+			break
+		}
+		else
+		{
+			Run, GodsWar.exe, %almacen%
+			sleep 1000
+			WinWait, GodsWar Online [USA] 	
+			WinActivate, GodsWar Online [USA]
+			Goto, Process#1
+			
+		}
+
+  	}
+		
+return
+
+
+
+
+;#################################### LoginCheck
+loginCheck#1:
+	while True{
+	
+		ImageSearch,,,0,0,800,600, *100 %login%
+	
+			If (ErrorLevel = 0)
+			{
+				break
+			}
+		}
+
+	return
+	
+	
+	
+
+;---------------------------------------------------------------Segundo proceso After log
+
+setupwindows#1:
+	SetMouseDelay,10
+	SetDefaultMouseSpeed, 2
+	click, 254, 570
+	gosub wincheck
+	sleep 600
+	Click, 619, 604                ;<---------- bag click
+	sleep 600
+	Click 553, 502
+	sleep 600
+	MouseClickDrag, L, 613, 127, 740, 267              ;Big bag on the  down right
+	sleep 600
+	MouseClickDrag, L , 610, 137, 77, 43				; big bag on the uppper left
+	sleep, 600                     ;<--------------------NPC CLICK    was there not anymore
+	MouseClickDrag, L, 607, 244, 530, 241 			; clicks the sacks and puts them in the right hotkeys space
+	Click, Right
+	goto OpenSacks
+	
+;-------------------------Open sacks-------------------------------
+OpenSacks:
+	sleep 500
+		While True
+		{
+			ImageSearch,,,528,579,565,616, *100 %empty% 
+				
+				If (ErrorLevel = 0)
+				{
+					Click, 85, 442
+					sleep 300
+					Click, 301, 401
+					sleep 500
+					Click, 314, 73
+					sleep 800
+					goto dropthings1
+					
+					
+				
+				}
+				else
+				{
+					gosub antiMount
+					Click, R , 530,241	
+				}
+		}
+return
+;----------------------------------AntiMount
+antiMount:
+	While True
+	{
+		ImageSearch,,,603,35,648,70, *200 %AntMount%
+			If (ErrorLevel = 0)
+			{
+				Click, 493, 567
+				return
+			}
+			else
+			{
+				break
+			}
+	
+	}	
+return
+;-----------------------------------------------------------------------------
+stall#1:
+	gosub wincheck
+	loop
+	{
+		ImageSearch, a111, b111, 0,0, 800, 600, *100 %e%
+
+			if (ErrorLevel = 0)
+			{
+				Click, 299, 403
+				sleep 500
+				Click, 312 , 71
+				MouseMove, 375, 330
+				sleep 2000
+				Click
+				
+				break
+			}
+
+	}
+
+    return
+
+
+;---------------------------------------------------------------------------
+
+detect#1:
+	sleep 1000
+	Click, 374,341
+	while True{
+		gosub wincheck
+		ImageSearch,,, 0,0 ,800, 600, *100 %f%
+
+			if (ErrorLevel = 0)
+			{
+				MouseClickDrag, L, 242, 176, 175, 465
+				Click, 28, 517
+				gosub detect2#1
+				break
+			}
+			else
+			{
+				
+			}
+		
+		}
+return
+
+;----------------------------------------------------------------------------
+detect2#1:
+	while True{
+		gosub wincheck
+		ImageSearch, c1, c2, 0,0, 800, 600, *20 %g%
+
+			if (ErrorLevel = 0)
+			{	
+				MouseClickDrag, L, 485, 263, 534, 111
+				Click, 774, 168
+				break
+			}
+	
+			else
+			{
+
+			}
+
+		  }
+	return
+	
+
+;-----------------------------------------Dropthings-----------------------------
+dropthings1:
+While True
+{
+		ImageSearch, scroll1, scroll2, 16,266,215,400, *170 %scroll%
+			
+			If (ErrorLevel = 0)
+			{
+				MouseCLickDrag, L ,scroll1+13, scroll2+13 ,236, 461,
+				Click
+				Click, 351, 351
+				sleep, 1000
+
+			}
+			
+			else
+			{
+				goto subdropthings1
+			}
+}
+return
+;-----------------------------------subdropthings1
+
+subdropthings1:
+While True
+{		
+	ImageSearch,asd1,asd2,568,197,799, 629, *170 %scroll%
+			
+		if (ErrorLevel = 0)
+		{
+			MouseCLickDrag, L ,asd1+13,asd2+13 ,236, 461,
+			Click
+			Click, 351, 351
+			sleep, 1000
+		}
+		else
+		{
+			goto dropthings2
+		}
+}
+return	
+
+;----------------------Dropthings2
+dropthings2:
+While True
+{	
+	
+		ImageSearch,map1,map2,16,266,215,400, *170 %map%
+	
+		if (ErrorLevel = 0)
+		{	
+			MouseCLickDrag, L ,map1+13, map2+13 ,236, 461,
+			Click
+			Click, 351, 351
+			sleep, 1000
+		}
+		else
+		{
+			goto subdropthings2
+		}
+
+}
+
+subdropthings2:
+While True
+{
+	ImageSearch,map11,map22,568,197,799, 629, *170 %map%
+		
+		if (ErrorLevel = 0)
+		{
+			MouseCLickDrag, L ,map11+13, map22+13 ,236, 461,
+			Click
+			Click, 351, 351
+			sleep, 1000
+		}
+		else
+		{
+			Goto UseTP
+		}
+}
+
+return
+
+;----------------------------UseTP
+UseTP:
+gosub detect#1 
+gosub AntiTrade
+While True
+{
+	if (Talent = 1 && A_index < 15)
+	{
+			
+		sleep 500
+		ImageSearch,tp1,tp2,15,269,214,401, *150 %tp%
+			
+				if (ErrorLevel = 0)
+				{
+						Click, 378, 321
+						sleep 100
+						loop 
+						{
+						
+							ImageSearch,,,391,413,427,441, *100 %batchx%
+									
+									if (ErrorLevel = 0)
+									{
+										
+										Click, 35, 521
+										loop
+										{
+											ImageSearch,,,374,46,427,93, *100 %RQimg4%
+												
+												if (ErrorLevel = 0)
+												{
+													tp1+= 14
+													tp2+= 10
+													Click, R, %tp1%, %tp2%
+													sleep 100
+													click 487, 73
+													sleep, 500
+													SendPlay, {2} {7}
+													sleep 500
+													Click, 712, 168
+													sleep, 500
+													goto , elpepe
+													
+													
+												}
+												else
+												{
+													
+												}
+										
+										
+										}
+										
+										
+									}
+									else
+									{
+										
+									}
+									
+							
+							}
+						}
+				else
+				{
+					goto elpepe
+				}
+	}
+	else if (Talent != 1)
+	{
+		
+		sleep 500
+		ImageSearch,tp1,tp2,15,269,214,401, *150 %tp%
+				
+			if (ErrorLevel = 0)
+			{
+				tp1+= 14
+				tp2+= 10
+				MouseClickDrag,L, %tp1% , %tp2%, 248, 319
+				Click
+				sleep 200
+				Click, 351, 351
+				goto, elpepe
+			}
+			else
+			{
+				break
+			}
+	
+	}
+	else if (A_index >= 15)
+	{
+		msgbox, timeout
+		break
+	}
+	else
+	{
+		break
+	}
+}
+return
+
+;------------------------------usemd2
+elpepe:
+SendPlay, {l}
+While True
+{
+	ImageSearch,pepe1,pepe2,14,264,214,403, *150 %md2%
+		
+		if (ErrorLevel = 0 )
+		{
+		
+			pepe1 += 14
+			pepe2 += 10
+			MouseClickDrag, L, %pepe1%, %pepe2%, 248, 319
+			Click, R
+			sleep 200
+				
+				loop
+				{
+					ImageSearch,,,526,575,567,623, *150 %md2%
+						
+						if (ErrorLevel = 0)
+						{
+							Click, R, 248, 319
+						}
+						
+						else
+						{
+							break
+						}
+				}
+		}
+		else
+		{	
+			goto usemd3
+			
+		}
+}
+return
+
+usemd3:
+sleep 2700
+while True
+{
+	ImageSearch,md31,md32,14,264,214,403, *170 %md3%
+		
+		if (ErrorLevel = 0)
+		{
+			md31 += 14
+			md32 += 14
+			MouseClickDrag, L, %md31%, %md32%, 265, 262
+			Click, R
+			sleep 200
+				
+				loop
+				{	
+					ImageSearch,,,524,571,563,622, *170 %md3%
+						
+						if (ErrorLevel = 0 )
+						{
+							Click, R, 265, 262
+						}
+						
+						else
+						{
+							break
+						}
+					
+				}
+		}
+		else
+		{
+			Sendplay, {l}
+			sleep 500
+			goto dropsilver
+		}
+}
+
+return
+
+
+;----------------------------------dropsilver
+dropsilver:
+While True
+{
+	ImageSearch, silver1, silver2, 11,264,214,403, *150 %silver%	
+		
+		if (ErrorLevel = 0)
+		{
+			MouseCLickDrag, L, silver1+13, silver2+14, 248, 319
+			Click
+			sleep 100
+			click, 371, 356 
+		}
+		else
+		{
+			goto START
+		}
+}
+return
+
+
+
+
+pwe1:
+;--------------------------------------------------------------------------------------
+a := "HBITMAP:*" . Create_klk_png() 	  ; kakashi IMG
+b := "HBITMAP:*" . Create_entrance3_png() ; Frecuent login entrance (3)
+b2 := "HBITMAP:" . Create_characterUSED_png() ; character used entrance
+c := "HBITMAP:*" . Create_entrance1_png() ; verifying(1)
+d := "HBITMAP:*" . Create_entrance2_png() ; connection error(2)
+e := "HBITMAP:*" . Create_stall_png()     ; stall setup
+f := "HBITMAP:*" . Create_batch_png()	  ; batch image
+g := "HBITMAP:*" . Create_secondwin_png() ; secondwin
+h := "HBITMAP:*" . Create_signal_png()    ; signal before set up(b bag)
+login := "HBITMAP:*" . Create_login_png() ; login checker
+entrance := "HBITMAP:*" . Create_GM_png() ; character entrance checker
+
+;------------------------------savetime----------------------------------------------------------
+
+save := "HBITMAP:*" . Create_16secs_png() ; waits 16 secs on entrance
+server := "HBITMAP:*" . Create_server_png() ; server route
+svbug := "HBITMAP:*" . Create_ServerBug_png() ; serverbugged
+
+;-----------------------------------------RQ start------------------------------------------------
+
+RandomQuest := "HBITMAP:*" . Create_RandomQuest_png() ; waits for the CRQ to appear
+ClaimSack := "HBITMAP:*" . Create_ClaimSack_png()     ; waits for the CS to appear
+batchx := "HBITMAP:*" . Create_batchx_png() ; batch x windows link
+RQimg4 := "HBITMAP:*" . Create_RQimg4_png() ; empty bag1
+batch2 := "HBITMAP:*" . Create_batch2_png() ; bug sack
+empty := "HBITMAP:*" . Create_empty_png()   ; empty back if rq is done	
+wait := "HBITMAP:*" . Create_waitchar_png() ; wait for the char to appear
+AntMount := "HBITMAP:*" . Create_AntiMount_png() ; anti mount img
+map := "HBITMAP:*" . Create_map_png() ; RQ map drop
+scroll := "HBITMAP:*" . Create_scroll_png() ; SCroll detect rq
+tp := "HBITMAP:*" . Create_TP_png() ; tp picture
+md2 := "HBITMAP:*" . Create_md2_png() ;md2 image
+silver := "HBITMAP:*" . Create_silver_png() ;silver img
+md3 := "HBITMAP:*" . Create_md3_png() ; md3 img
+trade := "HBITMAP:*" . Create_trade_png() ;anti trade
+jai = hay bobis	
+
+return
+
+;--------------------------------------------------AntiTrade
+
+Create_trade_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 1212 << !!A_IsUnicode)
+B64 := "iVBORw0KGgoAAAANSUhEUgAAACwAAAATCAIAAABkynguAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMgSURBVEhLYwgL850wobGwMJXWqKgoraI8Bw1VVuQCHcDQ1lauamCm7xTsHBhLZ2TqHiGibGhtZc6gqG1on9GXOv1Y8cIzdEZZs0/6Vi+T1rVjEJDXNYrvME7sHigkZxXMwCupou6ZOYBIQs+RgVtERt4qmHikYB2SUdM7ccG6/KbJSrZhXgml0QXNQHHXmMLC5ilqDhHIiolBwiomDBz8YhK6jhK6DhI6RKGUwvqd+4+GJheu2bI7o6w5s7y5a+o8NSuf0xeuRmWWSek5oakngHQd+WU0GFg5eQXldYVVTUTUzAkiMXWLIyfOeoQlAdlhyXlHT55LK6rtn7FgwYp1NW39yCqJQqqmQkoGnAISDEzMrBx8IsBI4RaVI4ikVXRv3LotJK0CZOuZ2T1/8TIxPffajdvzFi7hFZNHVkkUEpHlFBBjZuNgYGRiZmHnZGHnIgaJSUjfuHGDm08AyNbU1nv85ElMXMKxY8c3btosKi6FrJJoxMnEwgZxBIjPysmDingxETs3/8lTpy2s7YDsgODQLdu2x8YnNbe2t3V0rVu/ESiLrBgbQrECYi/YEcwsICEuPnYeQWC8cPCJcvDjQ+k5BZs2bwsMjVy2YrWbd0B8cnpTa4eAmMyuPfsKSip4RaTQ1GNHfCLsvEJsXEBH8zCzsoHSBBu3AFCCS0iKR1SeV1yRV0IJDxKSVU/MLKxv6w2OThGQVrVw9PIMigKK65g5pOWVSaroISvGhXjE5LmEZYAJgo1HEJQmgKEBdAEwmfBLqwsq6gsrGwmrGNMaCSnq88tq8ogpcAqIs3BwMzCzsgPDAOgCYIYR17aT1HehAwKWEKLq5gJyWsBcCUwrDMDQAMYC0GniOvbSxp6y5n6y5v60RtIm3hJ6TsAgAUYNGxcfMCTYgDEEDAYpQzc5i0AF23AF2whaI2BpLW3kIaphySelCooOZ2cXVg5uQQU9GRNvoLSyY5yyE82Ron2UrJkf0OdsPALCIiIMkyY3q6opMjAyoiAkAOEwM4FoIMEEFgEqAbLBUlANQASUgiCIEjgCK0RHQEGgSnZWVi8PFwAEozhTf/6DBwAAAABJRU5ErkJggg=="
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
+
+;---------------------------------MD3
+
+Create_md3_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 3056 << !!A_IsUnicode)
+B64 := "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"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
+
+;--------------------------------------silver
+
+Create_silver_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 3004 << !!A_IsUnicode)
+B64 := "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"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
 
 ;######################################imgKAKASHI#########################################################################################
+
 Create_klk_png(NewHandle := False) {
 Static hBitmap := 0
 If (NewHandle)
@@ -850,8 +1949,6 @@ If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0
 VarSetCapacity(Dec, DecLen, 0)
 If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
    Return False
-; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
-; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
 hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
 pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
 DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
@@ -870,6 +1967,7 @@ Return hBitmap
 }
 
 ;######################################################### Character in use #####################################
+
 
 Create_characterUSED_png(NewHandle := False) {
 Static hBitmap := 0
@@ -1110,39 +2208,7 @@ DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Pt
 Return hBitmap
 }
 
-;-------------------------------------------------------------------------------------LoginCheck
 
-Create_login_png(NewHandle := False) {
-Static hBitmap := 0
-If (NewHandle)
-   hBitmap := 0
-If (hBitmap)
-   Return hBitmap
-VarSetCapacity(B64, 2420 << !!A_IsUnicode)
-B64 := "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"
-If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
-   Return False
-VarSetCapacity(Dec, DecLen, 0)
-If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
-   Return False
-; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
-; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
-hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
-pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
-DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
-DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
-DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
-hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
-VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
-DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
-DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
-DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
-DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
-DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
-DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
-DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
-Return hBitmap
-}
 ;##########################################################################################ULTIMATE DETECT################################################
 
 Create_GM_png(NewHandle := False) {
@@ -1479,80 +2545,239 @@ DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Pt
 Return hBitmap
 }
 
+;------------------------------------------AntiMount
+Create_AntiMount_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 1832 << !!A_IsUnicode)
+B64 := "iVBORw0KGgoAAAANSUhEUgAAABQAAAAVCAIAAADJt1n/AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATxSURBVDhPVct5WJIHAMfx15XbssymTUq7ZnPa8dAKj6yMvCEIBI9Q0EgQUUkUXkQFBUM5RRLxhZkXui01jyzJWuaauTTLsvTp6XC1p+NppXO6gjlLGOvp6Xn6/vX74/cB3L9cx8rkcIQKbkkVWKLnF+v5kuN5R6v5vBJergTMk+XyFQXqZkFVOy9fxeWJc3hF3AJJKguEuboBDFp6pb5B2/JT5cmfdUbTd1BHNdQJtQzoajug+tP6+nO1xl/qTKOG09eqoBNabU1Fhf6YVi+XKz9xdAKKxTKpoVVa2yXXNitVTRpZq1bWplB3qRoHyowDGsNlTeM1TesN9elbcn2nVKEvKVFLiuXCgqJFrusBnlDN1baA4mo+u4yfXSEBWxW5XVx2k6hprLDmtrj8Jr/tCVg7mmf4ldd4NUfdlpNflpOVm5nOWgzzAdJ4SrrUmMbWMJOLaYliXsrxQuaZzKQf2OVDGdqxLOH1zMoJhnSAmVrDqB+hVg/SxMYUpoCckOQI8wVwSbnYbD0WbI1vvFv38DkxqZGJaiZHnSWg2tHpg4TM0UTqVVxSN/pIzwFBDxb8cb+gHZNRGZXA/WyRGxCGZexN0cibLtHOT9L7/0JTTDH76qj7+rC7OkLQPfvJNwixQ+GM66Ga38Hel8yGEaLIFJ7fiiQddXb0AnYgohEECXT2JrF5Zpd0NhbZSUFAytBb4uC+QuRFQegQPfhKoOgFrucNNLXAujqLkQ0iqEb/eIXbkiDAd1vcZr+MnUfOwUtfh4PTB7fX5X3bXh0yYQwer997qyl0XBtyGyGYwneYif0LsefnIpRjXizTJjLk4YwFfOGULcGCPQkXiNlTR5jT8og7ZzCTT/NezeosT4Qzlw48bQu7n5x8L0g9jelewJ00+2keekpurs3qXOsSC2z3jN+NUGSQRqoPTXZRXv3GsP1jtNle2/5vwmorfzOO/0O0+0o8YdxL9HKV6s/VoruwomEPUr37RjoQAEvGrCkV+Pc24R91xj3712CzTb+T9qw223PbDGdOiBzCYe9E7ulHRA9tRDavCtO5YbVwSjEQiBDFEbt1McODlGfTgjnrtF3YvvJY/4mDg0qptG/L2FsZbiKA8ph/bi69ZRIe2eCCLl9KMsCiuEBgVDmHfKombvBy9COz2LzwdsFqtTo6OgIAIJPJ7Ns2a3vIncmOHE3i3MfSBn2DqpYH5q8IFq5ecQCIQEnYSN336AsjhDsvGl5YLJb5+fllTks/YOu81dxnuc59nIruCwnvDOB0rzxkcELmufocBEI8yTQfXj3qxJDqyr3xe1OTk/1nLzp9vsSOfb2/qdHqLWazxWz5e3DWdHA4OvEUpsIUK69xJ4mWwxOAsHUk+ubsKgrU3X6m90KvTCL1gK22yw8lxiUM9A88uPtgOGWgiNgcL2hgiMs2k3krfGOAXZGsdDhHkiqBICglkfpefJy76ypFobql7uQx9DFSUMGGnTQXeLzL1xgAszuNvpUJUnNLS0u91mx4f/84BwcHDBIPVUGKVCl1W0agN87bG7d0UwQQu/UwzZ+eQc1gs9iw5Stdlnzh9Omy9+hdzk7Odr54kSPIBblZ3MMhdOQWgt+m/S6efoCciq9Ij648SpSDqJgIVybJJycFg0f541F+uCgEHoUQgoej0QHYiB2VqnydqkDF4fCoaVmH6KUi1n+q1kyY2LkaHgAAAABJRU5ErkJggg=="
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
 
 
+;-----------------------------------------------MapRQ
 
-pwe1:
+Create_map_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 2612 << !!A_IsUnicode)
+B64 := "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"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
 
-;--------------------------------------------------------------------------------------
-a := "HBITMAP:*" . Create_klk_png() 	  ; kakashi IMG
-b := "HBITMAP:*" . Create_entrance3_png() ; Frecuent login entrance (3)
-b2 := "HBITMAP:" . Create_characterUSED_png() ; character used entrance
-c := "HBITMAP:*" . Create_entrance1_png() ; verifying(1)
-d := "HBITMAP:*" . Create_entrance2_png() ; connection error(2)
-e := "HBITMAP:*" . Create_stall_png()     ; stall setup
-f := "HBITMAP:*" . Create_batch_png()	  ; batch image
-g := "HBITMAP:*" . Create_secondwin_png() ; secondwin
-h := "HBITMAP:*" . Create_signal_png()    ; signal before set up(b bag)
-login := "HBITMAP:*" . Create_login_png() ; login checker
-entrance := "HBITMAP:*" . Create_GM_png() ; character entrance checker
+;---------------------------------------------TP
 
-;------------------------------savetime----------------------------------------------------------
+Create_TP_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 2344 << !!A_IsUnicode)
+B64 := "iVBORw0KGgoAAAANSUhEUgAAABsAAAAUCAIAAADz4NHXAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAZzSURBVDhPAWgGl/kABg0VOUFKgYuSmqSqmqWtm6mzna66nbC9na+8nK66nqu5oKqwq6unrK6qpKeooKuwnK+7nLPBna++m6u4mqavmqGlgIeJNz5DAw4XAQ0WAQcMADxDSo+XnpKdo5OdpJSdpJOfp5SmsZWquJWotpemspukqaino83NwdfYy8PFvaytqZylp5epspWotZOksZSgqZOboZKboY+Xnz5KVAEOGAEHDAB2gIWLlJuKlZ2KmKCKl56KmKGKnqqLo7KMnKiQlZienpjNzb/h4s7k5dPm6NnR08Wtr6iWmJWTmp2PmqCMl56Llp+Ll6KKlqB4g4wBDxsBCA8AgIuSgIyUf46XfpCdfZKgfpWjgJipf5ipgo2UmZqTyMq63d/K3+DK3+HN5ObT5ebT3+DPzM2/q62klZiUiY2MhYuNiJCUiI+SgYqRABAdAQsSAHSBinOCjHGEkG+GlnCLoG+PpW+Qp3GImYCDgbm8rdXZxtveyN3gyt3gyd7eyODizN3eyd/gytLTusjIs7q6qK6voaiompiZj3mAhAATIQEMFABldoBkdYNieIthfpNfgpteiKRfhqBmdHyKjILM073T1cHLwrXPybvi5c7h4srZ2sHQ0LXGxqvFxanCwaa7uqCurJapp5WYmIttc3YBFiYBDRYAV2x4U2l6Um2DT3GNTHmZT3mVUl9mWFVQnZ+R2uLMzdG6sK6hwLmx2d3G2d7B0dOzwcCjs6mXs6eTsKiSqqeNpKOLpaONlZWFZWpqAxstARAbAEhebkRhdj9jfzxrij1lhUZNT2loXHFwY7K3pOv15N7s2s3TxLK0qNHUvtXcvdPXtbi3mZmNeolpX5iBcqijiKCfgqKghpOTgFldXAQYJgISHwA6TV43VW8zWnk2Vm1LTkmUln3Q17XY4MC/yLLu9en7/frw9OzFy7awr5XX2LzV2rjDxaGhm320ZFWdZlejmH+amHedm36VlH5MUlIEEBkCDhcALUJUKUdhMENQS0tBlpZ5zNCr4ejD5e7L4O3Q7ffm+/759/302ufSxLugwI111tK21tiyr7CLqIJoq1ZImYFslpNvmJRzmJh+SVBOBA8WAgoPACI5SygxN1VVRaChfb7Al9LVq+Pov+LrxeTw0On23u766fH66uDozcq+m99bO9qIauHgw83QrbSxjq15Xqt4ZZaRbpWRb6Cgg1FZVgUPFwIIDQAoJyNjYUykpH60tYu1t4+7wJna4bfm7cfd6MfP4MPE2LnJxaPXrZTcgmTlVi7iVS3gqITs7cnAw5yopoWtfmimm4CPi2icmn14e2sMFhsECg4AZGNMlpdxqamAubqNxcaauLyWr7WTtr+apLOUorORrpZy0Vw74Vkz4XpfxJVzxX9e0Fc30Z99yMCbrKiBqXdhuZeJk41sm5l6nqCHJiskBQoNAHl3WJGQaq2ugr6/kNHTpeTnvrC0kYaOcJSafKuAX8ppR8+IZNyuiODGrcfEqbeNcM9EJthGJ8VgQ71jR7NRQa10b5SMbpaTcZ6ghkhINxIVEQBwbk6OjGa4uZDV1avR0qXa3raanXuVlnOmi23EbkvApYLi4Ln09tD4+9rLzrWgfGK+TzK1dluyf2HCTje6PDWdd22Tj2uMiWeXl31qa1QfHxUAa2hJiohisbGHx8ieyMudtLWOjo1qjm1Rvlw6yZh00tKu7PDK9v/j6fDSoaCMkWRLsYhowLWZxLWRv3RdtmVUtq2WiYRih4ZmiIdscHBaHh0TAGRhQ4F+W6OhecbGnLa2ipaWboR1V7NOLMWBW8e8k+LjvPj92fL53czRsGhdUIphUK+hh7m0lLixirSefqaXcIyOdHh5WIKDZXx8Y1ZUPh8eFQBaVjtxbk2Sj2ezs4WrqH95bE+dTzHFXjmxmXHAvJDo6r/0/tng5MCZlHRtTzt6aleZl3SZl22XjmSUiWCOjGJ9hGd4eFh+f2JfXUQ9OSYaGREAUlA2ZGBBh4NdnZtvmpVudkoxvi0RpXxZo5lvxsKV9/nG7fTLpqOAZEY0WzIjiHxak5BjkoxejYpehYJWgoJZe31fgoNmaGdMQj4pHBoSBgoNAEdGLl5aPHt4U5KSaJWPbHxBKqgzF418Vp2TacrHl/j3vtbYsYR8YVc2IWdONo+KX5eTZ5uXcK2pi6CdgIyNcoqLb21sU21pVmJgVktQU0ZRWYWuhjYDGEmXAAAAAElFTkSuQmCC"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
 
-save := "HBITMAP:*" . Create_16secs_png() ; waits 16 secs on entrance
-server := "HBITMAP:*" . Create_server_png() ; server route
-
-;-----------------------------------------RQ start------------------------------------------------
-
-RandomQuest := "HBITMAP:*" . Create_RandomQuest_png() ; waits for the CRQ to appear
-ClaimSack := "HBITMAP:*" . Create_ClaimSack_png()     ; waits for the CS to appear
-batchx := "HBITMAP:*" . Create_batchx_png() ; batch x windows link
-RQimg4 := "HBITMAP:*" . Create_RQimg4_png() ; empty bag1
-batch2 := "HBITMAP:*" . Create_batch2_png() ; bug sack
-empty := "HBITMAP:*" . Create_empty_png()   ; empty back if rq is done	
-wait := "HBITMAP:*" . Create_waitchar_png() ; wait for the char to appear
-
-jai = hay bobis	
-return
-
-x:: pause
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+;---------------------------------------------md2-------
+Create_md2_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 2080 << !!A_IsUnicode)
+B64 := "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"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
 
 
+;-----------------------------------------------------------login
+Create_login_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 2400 << !!A_IsUnicode)
+B64 := "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"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
 
+;------------------------------------scroll
+Create_scroll_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 3004 << !!A_IsUnicode)
+B64 := "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"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
+
+
+Create_ServerBug_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 2828 << !!A_IsUnicode)
+B64 := "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"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+; Bitmap creation adopted from "How to convert Image data (JPEG/PNG/GIF) to hBITMAP?" by SKAN
+; -> http://www.autohotkey.com/board/topic/21213-how-to-convert-image-data-jpegpnggif-to-hbitmap/?p=139257
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
+
+
+^x::pause
 
