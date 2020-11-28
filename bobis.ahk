@@ -1,7 +1,7 @@
 #NoEnv
 Process, Priority,, High
-CoordMode,Pixel,Window
-CoordMode,Mouse,Window
+CoordMode,Pixel, Window
+CoordMode, Mouse, Window
 SetBatchLines, -1
 SetKeyDelay, 17
 #SingleInstance, Force
@@ -1101,7 +1101,6 @@ gosub klk1
 			return
 		}
 
-
 		else 
 		{
 			gosub wincheck
@@ -1464,6 +1463,7 @@ return
 
 		if WinExist("GodsWar Online [USA]")
 		{
+			gosub AntiRoll
 			return
 		}
 		  
@@ -1858,6 +1858,7 @@ Click, 369, 360
 sleep 2000
 goto process#1
 
+
 process#1:
 While True
 {
@@ -1875,7 +1876,6 @@ While True
 				ControlSend,, {Enter}, A
 				goto verify#1
 			}
-		
 			else 
 			{
 				goto wincheck#1
@@ -2076,6 +2076,7 @@ timers = 0
 			}
 			else
 			{
+				gosub afterRoll
 				timers++
 				sleep 1000
 					
@@ -2088,7 +2089,26 @@ timers = 0
 	}	
 return
 
+;######################
+afterRoll:
+sleep, 300
+		ImageSearch, x111, y111, 0, 0, 800, 600,*100 %d%
 
+			If (ErrorLevel = 0)
+			{
+				MouseMove, 398, 360
+				Click
+				sleep 800
+				MouseMove, 398, 414
+				Click
+				return
+			}
+			else
+			{
+				return
+			}
+			
+return
 ;---------------------------------------------Wait for the char to appear
 GM#2:
 	while True
@@ -2247,12 +2267,14 @@ while True
 	}
 return
 ;--------------------------------------------wincheck2
+
 wincheck#1:
 While True
 {
 
 	if WinExist("GodsWar Online [USA]")
 	{
+		gosub AntiRoll
 		WinActivate
 		break
 	}
@@ -2269,9 +2291,21 @@ While True
 }	
 return
 
-;#####################The Wincheck Open sacks
 
-
+;#####################The AntiRoll
+AntiRoll:
+	if WinExist("Prompt")
+	{
+		sleep 1000
+		ControlClick,,Prompt,,Left,2,NA OK
+		sleep 120000
+		return
+	}
+	else
+	{
+		return
+	}
+return
 
 ;#################################### LoginCheck
 loginCheck#1:
@@ -2283,13 +2317,14 @@ loginCheck#1:
 			{
 				break
 			}
+			else
+			{
+				gosub wincheck#1
+			}
 		}
 
 	return
 	
-	
-	
-
 ;---------------------------------------------------------------Segundo proceso After log
 
 setupwindows#1:
@@ -2328,9 +2363,9 @@ While True
 	}
 	else
 	{
-	gosub wincheck#1
-	gosub antiMount
-	Click, R , 530,241	
+		gosub wincheck#1
+		gosub antiMount
+		Click, R , 530,241	
 	}
 }
 return
@@ -2542,7 +2577,7 @@ While True
 													sleep 100
 													click 487, 73
 													sleep, 500
-													SendPlay, {2} {7}
+													ControlSend,, {2}{7},A
 													sleep 500
 													Click, 712, 168
 													sleep, 500
@@ -2610,7 +2645,7 @@ return
 
 ;------------------------------usemd2
 elpepe:
-SendPlay, {l}
+ControlSend,,{l},A
 While True
 {
 	ImageSearch,pepe1,pepe2,14,264,214,403, *150 %md2%
@@ -2681,7 +2716,7 @@ while True
 		else
 		{
 			gosub wincheck#1
-			Sendplay, {l}
+			ControlSend,,{l},A
 			sleep 500
 			goto dropsilver
 		}
