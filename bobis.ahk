@@ -6,7 +6,6 @@ SetBatchLines, -1
 SetKeyDelay, 17
 #SingleInstance, Force
 
-
 a := "HBITMAP:*" . Create_klk_png() 	  ; kakashi IMG
 b := "HBITMAP:*" . Create_entrance3_png() ; Frecuent login entrance (3)
 b2 := "HBITMAP:" . Create_characterUSED_png() ; character used entrance
@@ -18,15 +17,9 @@ g := "HBITMAP:*" . Create_secondwin_png() ; secondwin
 h := "HBITMAP:*" . Create_signal_png()    ; signal before set up(b bag)
 login := "HBITMAP:*" . Create_login_png() ; login checker
 entrance := "HBITMAP:*" . Create_GM_png() ; character entrance checker
-
-;------------------------------savetime----------------------------------------------------------
-
 save := "HBITMAP:*" . Create_16_png() ; waits 16 secs on entrance
 server := "HBITMAP:*" . Create_server_png() ; server route
 svbug := "HBITMAP:*" . Create_ServerBug_png() ; serverbugged
-
-;-----------------------------------------RQ start------------------------------------------------
-
 RandomQuest	:= "HBITMAP:*" . Create_RandomQuest_png() ; waits for the CRQ to appear
 ClaimSack	:= "HBITMAP:*" . Create_ClaimSack_png()     ; waits for the CS to appear
 batchx := "HBITMAP:*" . Create_batchx_png() ; batch x windows link
@@ -42,9 +35,9 @@ silver := "HBITMAP:*" . Create_silver_png() ;silver img
 md3 := "HBITMAP:*" . Create_md3_png() ; md3 img
 trade := "HBITMAP:*" . Create_trade_png() ;anti trade
 rqdone := "HBITMAP:*" . Create_donerq_png() ; empty rq when done
-jai = hay bobis
+lvl30 := "HBITMAP:*" . Create_pepe_png() ;lvl 30 pet
+upgrade := "HBITMAP:*" . Create_upgrade_png() ; upgrade opt
 sleep 100
-
 
 Create_trade_png(NewHandle := False) {
 Static hBitmap := 0
@@ -1006,47 +999,136 @@ DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Pt
 Return hBitmap
 }
 
+Create_pepe_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 520 << !!A_IsUnicode)
+B64 := "iVBORw0KGgoAAAANSUhEUgAAAAsAAAAICAIAAACgWpLfAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEbSURBVChTARAB7/4AO0VQpamuuLzAc3qCFyMvCRYjIy86k5ies7e6YmtzCRYiACAtOR0qNiAsN6uwtFBZYwkWI5aconN7gio2Qdnb3UhSWgBMkrgRJTUUIC2Ij5VPWGIRHirIy84hLTktOEOztruKkZYAKVFqXWlzoKWqoqesJjE9KTQ/zdDSUVpjm6CljpSao6isAAkXJB0pNUJLVaywtEVPWSUwPPT19aSprjI9SE1WX5+kqAAWLT4LGSYSHiuGjZNWX2gLGCXKzdA8RlAOGyiJj5V1fYMAba3PcX6IeYCHkJWbLDVACBMgcnh/lpyhfYSLr7K2JTA6AFJpeW93gGx0fUhRWis0QCkzPzY/S2Rsdm11fkhRXCczPf4laQE5wWY5AAAAAElFTkSuQmCC"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
+
+Create_upgrade_png(NewHandle := False) {
+Static hBitmap := 0
+If (NewHandle)
+   hBitmap := 0
+If (hBitmap)
+   Return hBitmap
+VarSetCapacity(B64, 1360 << !!A_IsUnicode)
+B64 := "iVBORw0KGgoAAAANSUhEUgAAACEAAAAMCAYAAADs1tSHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAORSURBVDhPvVRrbFNlGH7Opaen7WnXe9d1mN23KE4cWxisJEoiTERkAkOMwzASEmLAkREFItAIqdGgBAKSBRM0UwILWxZ0gDFxQgQ7DV4QxXghUTo34y5d6fV07et3OjTxJ3/2JG/y5v3e+/d8H7es8wSV19TCJIuYbaiZHP4cGQFX336QOI5nJpo5mXVw4Nz3+/PVmZo3zSbo7uBcga+aBElmmraN2QYhN52BUFToCpw4dgj9Z09jx9bNsMgC9u95CXpuGt98eQVqfBItTzyG4L6d2NS2Dm2tqyDmUrj18w10HTkILpPA3p3bMT76B3749itQOo7VK5bitcAuPLKoAb/dvI7ff/0p79fW+hT2vrwdz7SswHRiCteGPmf5I0DNA7V0OxwmT3EJXfj4E+rrP0fzFyym0z29VDu/keaU19Dgpcv0UP1CChwI0tXQEOnNTqqeW0fJZIreOnyUVq1dT1euhkhvcdLKp9fRyfe6ye0rpfbNW6jnbB8Vl1aTYi+kxsVLmF5FpVVzaeD8RapvbCLJaCaeEwS2Fg6CzgCeF7DjlVcx/PcEorE4rA43nB4fIlMxjE3F8f2PvyClZqAzKhBlE/Pn8Mbh4xj6+gZ6P7wAWSnAvLo6JNMqmh9vhsPphsfjgd1dCF4yIqlmsajJD7/fz/LHYHe4mI8LvF42guM4iAYFnCAiJxigV2zgdXoIsoLxWBpWmw1vvn4AGzc8h3fe74VksrFGLMgxXqmQkCYR7545l4/Tswa1ZgqcXqRyArp7BxBN5eAoLEZgz24sWNgEq8sLUW9gg8swmMwQO7a+wBbBQWcwgxd0KC4pg2I0wWq1I6YCJWWVCP81jkNdp5BmW4hEo5AUO2ukQAvL6/9Ce1+3RydQWVGBz0LfIRqPQzEYkeFlOGxWVFVW4GTPgEZHrPd6oT2IsckpCJ45ZYGiIh/OD36BJ5uX5EnV8PCD6O67iJu3wmD/CbZsWM3ItBytK5di2aN+jIxFEIkl0dQwD2c+GoQgSnnhmYRHx+F2ObBr26Z8jKiTZvJkCWazCe3PtsBusyN0jRE2PIzhYfZZmb3lGtHg8vpwNLgbHfuP4U48MTMaw31FHuzb9jw6g28jmVLRsXENu88Ejn/Qf9fj3kG5LLLpJFT2QtQ7E+DV2CSzZtlVSHluaNPwov4/iSZUNnUCRwIvoivYCYtFwaeh6//zuVfRuKDV0eplklH8A+1QVulLxAP5AAAAAElFTkSuQmCC"
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+VarSetCapacity(Dec, DecLen, 0)
+If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", &Dec, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
+   Return False
+hData := DllCall("Kernel32.dll\GlobalAlloc", "UInt", 2, "UPtr", DecLen, "UPtr")
+pData := DllCall("Kernel32.dll\GlobalLock", "Ptr", hData, "UPtr")
+DllCall("Kernel32.dll\RtlMoveMemory", "Ptr", pData, "Ptr", &Dec, "UPtr", DecLen)
+DllCall("Kernel32.dll\GlobalUnlock", "Ptr", hData)
+DllCall("Ole32.dll\CreateStreamOnHGlobal", "Ptr", hData, "Int", True, "PtrP", pStream)
+hGdip := DllCall("Kernel32.dll\LoadLibrary", "Str", "Gdiplus.dll", "UPtr")
+VarSetCapacity(SI, 16, 0), NumPut(1, SI, 0, "UChar")
+DllCall("Gdiplus.dll\GdiplusStartup", "PtrP", pToken, "Ptr", &SI, "Ptr", 0)
+DllCall("Gdiplus.dll\GdipCreateBitmapFromStream",  "Ptr", pStream, "PtrP", pBitmap)
+DllCall("Gdiplus.dll\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "PtrP", hBitmap, "UInt", 0)
+DllCall("Gdiplus.dll\GdipDisposeImage", "Ptr", pBitmap)
+DllCall("Gdiplus.dll\GdiplusShutdown", "Ptr", pToken)
+DllCall("Kernel32.dll\FreeLibrary", "Ptr", hGdip)
+DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Ptr", pStream)
+Return hBitmap
+}
+
+changer := 1
+x := 133
+
 FileReadLine,account,%A_MyDocuments%\RQaccount.txt, 1
 FileReadLine,password,%A_MyDocuments%\RQaccount.txt, 2
 FileReadLine,godswarfile,%A_MyDocuments%\RQaccount.txt, 3
 gosub klk1
 
- 
+
 	Menu, Tray, icon, %a%
 	Gui, Add, Edit, w100 h20 vgodswarfile, %godswarfile%
 	Gui, Add, Button,x115 y5 gsearchpath, FILE
-	Gui, Add, Picture,x65 y40 w120 h100, %a%
-	Gui, Add, Text,x200 y25 w100 h25 cwhite, Account:
-	Gui, Add, Edit, w130 h20 vaccount gklk1, %account%
-	Gui, Add, Text,x200 y85 w100 h25 cwhite, pa$$word:
-	Gui, Add, Edit, w130 h20 vpassword gklk1, %password%
+	Gui, Add, Picture,x75 y40 w130 h100, %a%
+	Gui, Add, Text,x230 y25 w100 h25 cwhite, Account:
+	Gui, Add, Edit, x230 y56 w130 h20 vaccount gklk1, %account%
+	Gui, Add, Text,x230 y85 w100 h25 cwhite, pa$$word:
+	Gui, Add, Edit, x230 y120 w130 h20 vpassword gklk1 password, %password%
 	Gui, Add, Button, x10 y50 w50 h25  grefresh, Refresh
 	Gui, Add, Button, w50 h25 gprocess1, Start
 	Gui, Add, Button, w50 h25 gexit, Exit 
-	Gui, Add, Text, x230 y180 c2DE91A, Powered by RodolfoRP
-	Gui, Add, Text, x230 y160 c42F7FA, First App --- Simple
-	Gui, Add, CheckBox, x19 y160 Checked vTalent gklk1 cwhite, TP
-	Gui, Add, Text , x75 y150 w50 h15 cwhite, RQ delay
-	Gui, Add, Edit, w30 h20 vdelay gklk1, 0
-	Gui, Color, Black
-	Gui, show, w350 h200, Smart Kakashi Auto RQ
-
-
-			;Primer paso
-	
-	
+	Gui, Add, Text, x275 y225 c2DE91A, Powered by RodolfoRP
+	Gui, Add, Text, x285 y210 c42F7FA, FLOW NATURAL
+	Gui, Add, CheckBox, x19 y160 -Checked vTalent gklk1 cwhite, TP
+	Gui, Add, Button, w50 h30 x300 y170 gNOUAC , NO UAC
+	Gui, Add, Checkbox, x19 y185 -Checked vPET30 gklk1 cwhite, Auto Pet lvl 30
+	Gui, Add, Edit, w25 h15 x19 y210 vchanger gklk2  Number limit1,
+	Gui, Add, Text,  x50 y210 cwhite,PET30 StartSLOT
+ 	Gui, Color, Black
+	Gui, show, w400 h250, Smart Kakashi Auto RQ
     return
 
+klk2:
+Gui,submit, NoHide
+	if (changer > 4)
+	{
+		msgbox,,FUUUUUUUUUCK,only 4 slots are available
+		GuiControl,, changer, 
+		Gui,submit, NoHide
+	}
+	else if (changer = 1)
+	{
+		x = 133
+	}
+	else if (changer = 2)
+	{
+		x = 185
+	}
+	else if (changer = 3)
+	{
+		x = 243
+	}
+	else if (changer = 4)
+	{
+		x = 296
+	}
+	
+return
+
+NOUAC:
+RegWrite, REG_DWORD, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,EnableLUA, 0
+return
 
 ;################################################Setup#######################################################################################################
 
 	searchpath:
-	FileSelectFolder, almacen, %godswarfile%
-
+	FileSelectFolder, almacen,%godswarfile%
+	
 	if (almacen == ""){
 		MsgBox, selecciona FILE y carpeta gw mmg
 	}
-
 	IniWrite,0,%almacen%\Localization\en_us\Settings\Sys\Magic.ini,5150,CoolingTime
 	gw = %almacen%\GodsWar.exe
 	GuiControl, Text, godswarfile, %almacen%
@@ -1669,7 +1751,6 @@ while True
 
 	if (ErrorLevel = 0)
 	{
-		sleep %delay%
 		break
 	}
 	
@@ -1946,6 +2027,10 @@ return
 			sleep 650
 			goto, setupwindows#1
 		}
+		else
+		{
+			gosub wincheck#1
+		}
 
 	}
 
@@ -2190,7 +2275,7 @@ savetime#2:
 		
 			if (ErrorLevel = 0)
 			{
-				sleep 1200
+				sleep 2300
 				click 540, 527
 				gosub GM#1
 				goto savetime#3
@@ -2297,8 +2382,8 @@ AntiRoll:
 	if WinExist("Prompt")
 	{
 		sleep 1000
-		ControlClick,,Prompt,,Left,2,NA OK
-		sleep 120000
+		WinClose
+		sleep 240000
 		return
 	}
 	else
@@ -2468,11 +2553,13 @@ While True
 				Click
 				Click, 351, 351
 				sleep, 1000
+				gosub wincheck#1
 
 			}
 			
 			else
 			{
+				gosub wincheck#1
 				goto subdropthings1
 			}
 }
@@ -2490,9 +2577,11 @@ While True
 			Click
 			Click, 351, 351
 			sleep, 1000
+			gosub wincheck#1
 		}
 		else
 		{
+			gosub wincheck#1
 			goto dropthings2
 		}
 }
@@ -2511,9 +2600,11 @@ While True
 			Click
 			Click, 351, 351
 			sleep, 1000
+			gosub wincheck#1
 		}
 		else
 		{
+			gosub wincheck#1
 			goto subdropthings2
 		}
 
@@ -2530,9 +2621,11 @@ While True
 			Click
 			Click, 351, 351
 			sleep, 1000
+			gosub wincheck#1
 		}
 		else
 		{
+			gosub wincheck#1
 			Goto UseTP
 		}
 }
@@ -2740,10 +2833,105 @@ While True
 		}
 		else
 		{
+			gosub APet30
 			goto START
 		}
 }
 return
+
+
+;---------------------------------------------------AutoPet lvl 30 PROCESS------------------------------------------------------------------------
+
+APet30:
+	if (PET30 == 1)
+	{
+		ControlSend,,{p},A
+		sleep 400
+		Click, %x%, 337   ;clicks on the pet
+		sleep 400
+		Click, 216, 388	   ; cicks on details
+		loop
+		{
+			sleep 1000
+			ImageSearch,,,129,413,143,431, *50 %lvl30%
+					
+				if (ErrorLevel = 0)
+				{
+					Click, 317, 85
+					gosub changer
+					break
+				}
+				else
+				{
+					ImageSearch,,,188,415,251,452, *10 %upgrade%
+						
+						if (ErrorLevel = 0)
+						{
+							click, 221, 441
+							MouseMove, 233, 382
+							sleep 600
+						}
+						else
+						{
+							ControlSend,,{p},A
+							Click, 317, 85
+							sleep 200
+							break
+						}
+				}
+		}
+	}
+	else
+	{
+		return
+	}
+return
+
+changer:
+	if (changer == 1)
+	{
+		click, 193, 341
+		sleep 400
+		click, 146, 387
+		sleep 200
+		ControlSend,, {p},A
+		sleep 1000
+		ControlSend,, {l},A
+		sleep 200
+		x = 185
+		changer = 2
+	}
+	else if (changer == 2)
+	{
+		Click, 245, 338
+		sleep 400
+		click, 146, 387
+		sleep 200
+		ControlSend,, {p},A
+		sleep 1000
+		ControlSend,, {l},A
+		sleep 200
+		x = 243
+		changer = 3
+	}
+	else if (changer == 3)
+	{
+		Click, 302,332
+		sleep 400
+		click, 146, 387
+		sleep 200
+		ControlSend,, {p},A
+		sleep 1000
+		ControlSend,, {l},A
+		sleep 200
+		x = 296
+	}
+	else
+	{
+		return
+	}
+return
+
 
 ^x::pause
 
