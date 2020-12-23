@@ -37,7 +37,7 @@ trade := "HBITMAP:*" . Create_trade_png() ;anti trade
 rqdone := "HBITMAP:*" . Create_donerq_png() ; empty rq when done
 lvl30 := "HBITMAP:*" . Create_pepe_png() ;lvl 30 pet
 upgrade := "HBITMAP:*" . Create_upgrade_png() ; upgrade opt
-sleep 100
+sleep 150
 
 Create_trade_png(NewHandle := False) {
 Static hBitmap := 0
@@ -1059,8 +1059,6 @@ DllCall(NumGet(NumGet(pStream + 0, 0, "UPtr") + (A_PtrSize * 2), 0, "UPtr"), "Pt
 Return hBitmap
 }
 
-changer := 1
-x := 133
 
 FileReadLine,account,%A_MyDocuments%\RQaccount.txt, 1
 FileReadLine,password,%A_MyDocuments%\RQaccount.txt, 2
@@ -1079,15 +1077,15 @@ gosub klk1
 	Gui, Add, Button, x10 y50 w50 h25  grefresh, Refresh
 	Gui, Add, Button, w50 h25 gprocess1, Start
 	Gui, Add, Button, w50 h25 gexit, Exit 
-	Gui, Add, Text, x275 y225 c2DE91A, Powered by RodolfoRP
-	Gui, Add, Text, x285 y210 c42F7FA, FLOW NATURAL
+	Gui, Add, Text, x275 y215 c2DE91A, Powered by RodolfoRP
+	Gui, Add, Text, x285 y200 c42F7FA, FLOW NATURAL
 	Gui, Add, CheckBox, x19 y160 -Checked vTalent gklk1 cwhite, TP
-	Gui, Add, Button, w50 h30 x300 y170 gNOUAC , NO UAC
+	Gui, Add, Button, w50 h30 x300 y165 gNOUAC , NO UAC
 	Gui, Add, Checkbox, x19 y185 -Checked vPET30 gklk1 cwhite, Auto Pet lvl 30
-	Gui, Add, Edit, w25 h15 x19 y210 vchanger gklk2  Number limit1,
 	Gui, Add, Text,  x50 y210 cwhite,PET30 StartSLOT
+	Gui, Add, Edit, w25 h15 x19 y210 vchanger gklk2 disabled Number limit1,
  	Gui, Color, Black
-	Gui, show, w400 h250, Smart Kakashi Auto RQ
+	Gui, show, w400 h230, Smart Kakashi Auto RQ
     return
 
 klk2:
@@ -1114,14 +1112,35 @@ Gui,submit, NoHide
 	{
 		x = 296
 	}
-	
+	else
+	{
+		x = 0
+	}
 return
+
+
+klk1:
+Gui, Submit, NoHide
+	if (PET30 = 1)
+	{
+		GuiControl, enabled, changer
+		Msgbox,,Sharingan,please select the PetSlot 1-4
+		GuiControl,, changer, 
+		Gui,submit, NoHide
+	}
+	else
+	{
+		GuiControl, disabled, changer
+	}
+	FileDelete,%A_MyDocuments%\RQaccount.txt
+	return
 
 NOUAC:
 RegWrite, REG_DWORD, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,EnableLUA, 0
 return
 
 ;################################################Setup#######################################################################################################
+
 
 	searchpath:
 	FileSelectFolder, almacen,%godswarfile%
@@ -1132,12 +1151,10 @@ return
 	IniWrite,0,%almacen%\Localization\en_us\Settings\Sys\Magic.ini,5150,CoolingTime
 	gw = %almacen%\GodsWar.exe
 	GuiControl, Text, godswarfile, %almacen%
-
-	klk1:
-	FileDelete,%A_MyDocuments%\RQaccount.txt
-	Gui, Submit, NoHide
 	return
-
+	
+	
+;------------------------------------------------------------GUI CLOSE 
 	GuiClose:
 	FileAppend,
 	(
@@ -1173,6 +1190,7 @@ return
 			WinActivate
 			gosub loginCheck
 			MouseMove, 0,0
+			sleep 250
 			ControlSend,, %account%, A
 			sleep 250
 			ControlSend,, {Tab}, A
@@ -1949,6 +1967,7 @@ While True
 				WinActivate
 				gosub loginCheck#1
 				MouseMove, 0,0
+				sleep 250
 				ControlSend,, %account%, A
 				sleep 250
 				ControlSend,, {Tab}, A
@@ -2720,7 +2739,7 @@ While True
 			else
 			{
 				gosub wincheck#1
-				break
+				goto elpepe
 			}
 	
 	}
@@ -2788,8 +2807,8 @@ while True
 			md32 += 14
 			MouseClickDrag, L, %md31%, %md32%, 265, 262
 			Click, R
-			sleep 200
-				
+			sleep 200 ;the md3 bug has to be fixed here
+			Click, R
 				loop
 				{	
 					ImageSearch,,,524,571,563,622, *170 %md3%
@@ -2798,7 +2817,6 @@ while True
 						{
 							Click, R, 265, 262
 						}
-						
 						else
 						{
 							break
@@ -2934,4 +2952,6 @@ return
 
 
 ^x::pause
+
+
 
